@@ -1,9 +1,14 @@
 module Wetransfer
   class Transfer
+    attr_accessor :files, :meesage
 
     def initialize(message:, files: [])
       @message = message
       @files = files
+      @external_id = nil
+      @state = nil
+      @url = nil
+      @expires_at = nil
     end
 
     def add_file(name:, io:)

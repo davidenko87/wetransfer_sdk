@@ -14,13 +14,27 @@ module Wetransfer
       files.each do |file|
         transfer.add_file(name: file[:name], io: file[:io])
       end
-      @connection.post_request(callback_url: "#{@api_url_base}/v2/transfers",
+      resp = @connection.post_request(callback_url: "#{@api_url_base}/v2/transfers",
                                payload: transfer.request_params)
+      # need to store return values from api
+      # update transfer_id and file_ids
+      binding.pry
+      resp.parse
 
-
+      get_upload_urls(transfer: transfer)
     end
 
     private
+
+    def get_upload_urls(transfer:)
+      transfer.files.each do |file|
+        request_upload_url(transfer_id: transfer.id,)
+      end
+    end
+
+    def request_upload_url(transfer_id:, file_id:, part_number:)
+      @connection.get_request(callback_url: "#{@api_url_base}/v2/transfers/#{transfer_id}/files/#{file_id}/upload-url/#{part_number}")
+    end
 
     def establize_connection
       Wetransfer::Connection.new(client: self)
